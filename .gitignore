@@ -2,6 +2,9 @@
 # Prerequisites
 *.d
 
+# compiled binaries
+render
+
 # Object files
 *.o
 *.ko
