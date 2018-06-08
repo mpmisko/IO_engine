@@ -1,6 +1,8 @@
 CC=gcc
-CFLAGS=-Wall -g -D_POSIX_SOURCE -D_BSD_SOURCE -D_DEFAULT_SOURCE -std=c99 -Werror -pedantic -lm
-RCFLAGS=`sdl2-config --libs --cflags` -Wall -g -D_POSIX_SOURCE -D_BSD_SOURCE -D_DEFAULT_SOURCE -std=c99 -Werror -pedantic -lSDL2_image -lm
+CFLAGS=-Wall -g -D_POSIX_SOURCE -D_BSD_SOURCE -D_DEFAULT_SOURCE -std=c99 -Werror -pedantic -lm \
+	   -Wno-error=unused-command-line-argument
+RCFLAGS=`sdl2-config --libs --cflags` -Wall -g -D_POSIX_SOURCE -D_BSD_SOURCE -D_DEFAULT_SOURCE \
+		-std=c99 -Werror -pedantic -lSDL2_image -lm -Wno-error=unused-command-line-argument
 RENDERER_BUILD_DIR=./renderer_build_dir
 RENDERER_FILES=src/renderer_main.c
 RENDERER_OBJECTS=$(RENDERER_FILES:%.c=$(RENDERER_BUILD_DIR)/%.o)
