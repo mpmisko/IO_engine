@@ -86,8 +86,16 @@ int main(void) {
                 ? sprite.rectangle.x + sprite.rectangle.w < WINDOWWIDTH
                 : sprite.rectangle.x > 0)) {
       while (SDL_PollEvent(&event)) {
-        if (event.type == SDL_QUIT) {
-          close_requested = 1;
+        switch (event.type) {
+          case SDL_QUIT:
+            close_requested = 1;
+            break;
+          case SDL_KEYUP:
+          case SDL_KEYDOWN:
+            sprite_keypress(&sprite, event);
+            break;
+          default:
+            break;
         }
       }
       sprite.rectangle.x =
@@ -110,8 +118,9 @@ int main(void) {
       // SDL_RenderCopy(renderer, sprite.texture, NULL, &sprite.rectangle);
       SDL_RenderPresent(renderer);
 
-      sprite.angle =
-          sprite.angle + 1 > 360 ? sprite.angle + 1 - 360 : sprite.angle + 1;
+      // sprite.angle =
+      //     sprite.angle + 1 > 360 ? sprite.angle + 1 - 360 : sprite.angle + 1;
+      
 
       SDL_Delay(1000 / 60);
     }
