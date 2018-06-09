@@ -13,7 +13,7 @@ typedef struct {
   int dright;
   int dleft;
   int dbckwd;
-  int rotation_speed;
+  double rotation_speed;
   int movement_speed;
 } Sprite;
 

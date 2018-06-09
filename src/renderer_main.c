@@ -68,8 +68,8 @@ int main(void) {
   SDL_RenderPresent(renderer);
 
   // create sprite
-  Sprite sprite = get_sprite(0, WINDOWHEIGHT / 2, "resources/rectangle.png",
-                             renderer, window);
+  Sprite sprite = get_sprite(WINDOWWIDTH / 2, WINDOWHEIGHT / 2,
+                             "resources/sprite1.png", renderer, window);
   // SDL_Texture* sprite_texture =
   //    get_texture("resources/rectangle.png", renderer, window);
   // SDL_Rect sprite_rect = get_rect_from_texture(sprite_texture);
@@ -98,19 +98,10 @@ int main(void) {
             break;
         }
       }
-      sprite.rectangle.x =
-          sprite.rectangle.x +
-          direction *
-              (WINDOWWIDTH / 2 -
-               abs(WINDOWWIDTH / 2 -
-                   (sprite.rectangle.x + sprite.rectangle.w / 2))) /
-              20 +
-          direction;
       SDL_Point center = get_center(sprite.rectangle);
       SDL_RenderCopy(renderer, background_texture, NULL, NULL);
-      if (SDL_RenderCopyEx(renderer, sprite.texture, NULL,
-                            &sprite.rectangle, sprite.angle, &center,
-                            SDL_FLIP_NONE)) {
+      if (SDL_RenderCopyEx(renderer, sprite.texture, NULL, &sprite.rectangle,
+                           sprite.angle, &center, SDL_FLIP_NONE)) {
         clean_up(renderer, window);
         printf("error rendering texture: %s\n", SDL_GetError());
         return 1;
@@ -120,7 +111,6 @@ int main(void) {
 
       // sprite.angle =
       //     sprite.angle + 1 > 360 ? sprite.angle + 1 - 360 : sprite.angle + 1;
-      
 
       SDL_Delay(1000 / 60);
     }

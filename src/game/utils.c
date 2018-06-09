@@ -1,4 +1,8 @@
+#include <math.h>
+
 #include "utils.h"
+
+#define PI acos(-1.0) 
 
 void clean_up(SDL_Renderer* renderer, SDL_Window* window) {
   SDL_DestroyRenderer(renderer);
@@ -53,4 +57,12 @@ SDL_Point get_center(SDL_Rect rectangle) {
   SDL_Point center = {rectangle.w / 2,
                       rectangle.h / 2};
   return center;
+}
+
+double to_degrees(double radians) {
+      return radians * (180.0f / PI);
+}
+
+double to_radians(double degrees) {
+  return (degrees * PI) / 180.0f;
 }

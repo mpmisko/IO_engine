@@ -17,8 +17,8 @@ Sprite get_sprite(int x, int y, char* texture_path, SDL_Renderer* renderer,
   s.dleft = 0;
   s.dright = 0;
   s.dbckwd = 0;
-  s.rotation_speed = 5;
-  s.movement_speed = 10;
+  s.rotation_speed = 7.5f;
+  s.movement_speed = 12;
 
   return s;
 }
@@ -55,6 +55,19 @@ void sprite_propagate_movement(Sprite* sprite) {
     sprite->angle = sprite->angle + sprite->rotation_speed > 360
                         ? sprite->angle + sprite->rotation_speed - 360
                         : sprite->angle + sprite->rotation_speed;
+  }
+
+  if (sprite->dfwd) {
+    sprite->rectangle.x -=
+        sin(to_radians(-sprite->angle)) * sprite->movement_speed;
+    sprite->rectangle.y -=
+        cos(to_radians(-sprite->angle)) * sprite->movement_speed;
+  }
+  if (sprite->dbckwd) {
+    sprite->rectangle.x +=
+        sin(to_radians(-sprite->angle)) * sprite->movement_speed;
+    sprite->rectangle.y +=
+        cos(to_radians(-sprite->angle)) * sprite->movement_speed;
   }
 }
 
