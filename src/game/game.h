@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_timer.h>
+#include <SDL2/SDL_ttf.h>
 
 typedef enum { wasd, arrows, ijkl, tfgh } controls;
 
@@ -23,8 +24,12 @@ typedef struct game_ {
   SDL_Window* window;
   SDL_Renderer* renderer;
   SDL_Texture* background_texture;
+  int fps;
+  int render_fps;
+  Uint32 last_render_ticks;
+  int width;
+  int height;
   // size of window
-  // FPS
 } Game;
 
 // Game

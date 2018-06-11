@@ -43,9 +43,6 @@ int main(void) {
       sprite_propagate_movement(&sprite);
 
       render_game(game, &sprite, 1);
-
-      // introduce delay to maintain 60FPS
-      SDL_Delay(1000 / 60);
     }
   }
 

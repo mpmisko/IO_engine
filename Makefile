@@ -3,7 +3,7 @@ CFLAGS=-Wall -g -D_POSIX_SOURCE -D_BSD_SOURCE -D_DEFAULT_SOURCE -std=c99 -Werror
 RCFLAGS= -Wall -g -D_POSIX_SOURCE -D_BSD_SOURCE -D_DEFAULT_SOURCE \
 		-std=c99 -Werror -pedantic
 RCLINKERFLAGS=`sdl2-config --libs --cflags` -Wall -g -D_POSIX_SOURCE -D_BSD_SOURCE \
-			  -D_DEFAULT_SOURCE -std=c99 -Werror -pedantic -lSDL2_image -lm
+			  -D_DEFAULT_SOURCE -std=c99 -Werror -pedantic -lSDL2_image -lm -lSDL2_ttf
 RENDERER_BUILD_DIR=./renderer_build_dir
 RENDERER_FILES=$(addprefix src/,renderer_main.c $(addprefix game/,sprite.c utils.c game.c))
 RENDERER_OBJECTS=$(RENDERER_FILES:%.c=$(RENDERER_BUILD_DIR)/%.o)

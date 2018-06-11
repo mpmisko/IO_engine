@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "game.h"
 #include "utils.h"
 
@@ -34,7 +38,12 @@ SDL_Renderer* init_renderer(SDL_Window* window) {
 
 Game* init_game() {
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER)) {
-    perror("SDL_Init Failed");
+    printf("SDL_Init Failed: %s\n", SDL_GetError());
+    exit(1);
+  }
+
+  if (TTF_Init()) {
+    printf("TTF_Init Failed: %s\n", TTF_GetError());
     exit(1);
   }
 
@@ -43,6 +52,11 @@ Game* init_game() {
   game->window = init_window();
   game->renderer = init_renderer(game->window);
   game->background_texture = NULL;
+  game->fps = 0;  // default value
+  game->last_render_ticks = 0;
+  game->render_fps = 1;
+  game->width = WINDOWWIDTH;
+  game->height = WINDOWHEIGHT;
 
   return game;
 }
@@ -70,6 +84,24 @@ void render_game(Game* game, Sprite* sprites, int num_sprites) {
     }
   }
 
+  Uint32 ticks_passed = SDL_GetTicks() - game->last_render_ticks + 1;
+  game->last_render_ticks = SDL_GetTicks();
+  game->fps = 1000 / ticks_passed;
+
+  if (game->render_fps) {
+    SDL_Color White = {255, 255, 255, 255};
+    char fps_str[8];
+    snprintf(fps_str, 7, "%d fps", game->fps);
+    SDL_Texture* fps_texture = get_text_texture(fps_str, White, game->renderer);
+    SDL_Rect texture_rect;
+    texture_rect.h = 40;
+    texture_rect.w = 60;
+    texture_rect.x = game->width - texture_rect.w;
+    texture_rect.y = 0;
+    SDL_RenderCopy(game->renderer, fps_texture, NULL, &texture_rect);
+    SDL_DestroyTexture(fps_texture);
+  }
+
   SDL_RenderPresent(game->renderer);
 }
 
@@ -78,4 +110,5 @@ void delete_game(Game* game) {
   SDL_DestroyRenderer(game->renderer);
   SDL_DestroyWindow(game->window);
   SDL_Quit();
+  TTF_Quit();
 }
