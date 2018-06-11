@@ -4,19 +4,11 @@
 
 #define PI acos(-1.0) 
 
-void clean_up(SDL_Renderer* renderer, SDL_Window* window) {
-  SDL_DestroyRenderer(renderer);
-  SDL_DestroyWindow(window);
-  SDL_Quit();
-}
-
-SDL_Texture* get_texture(const char* path, SDL_Renderer* renderer,
-                         SDL_Window* window) {
+SDL_Texture* get_texture(const char* path, SDL_Renderer * renderer) {
   SDL_Surface* surface = IMG_Load(path);
   if (!surface) {
     perror("IMG_Load Failed\n");
-    clean_up(renderer, window);
-    exit(1);
+    return NULL;
   }
 
   // if (SDL_SetColorKey(surface, SDL_TRUE,
@@ -31,8 +23,7 @@ SDL_Texture* get_texture(const char* path, SDL_Renderer* renderer,
   SDL_FreeSurface(surface);
   if (!texture) {
     perror("CreateTextureFromSurface Failed\n");
-    clean_up(renderer, window);
-    exit(1);
+    return NULL;
   }
 
   return texture;

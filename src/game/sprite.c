@@ -1,11 +1,10 @@
 #include <math.h>
 
-#include "sprite.h"
+#include "game.h"
 #include "utils.h"
 
-Sprite get_sprite(int x, int y, char* texture_path, SDL_Renderer* renderer,
-                  SDL_Window* window) {
-  SDL_Texture* texture = get_texture(texture_path, renderer, window);
+Sprite get_sprite(int x, int y, char* texture_path, Game* game) {
+  SDL_Texture* texture = get_texture(texture_path, game->renderer);
 
   Sprite s;
   s.texture = texture;
