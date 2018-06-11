@@ -21,5 +21,6 @@ Sprite get_sprite(int x, int y, char* texture_path, SDL_Renderer* renderer,
                   SDL_Window* window);
 void free_sprite(Sprite* sprite);
 void sprite_keypress(Sprite* sprite, SDL_Event event);
+void sprite_propagate_movement(Sprite* sprite);
 
 #endif  // SPRITE_H

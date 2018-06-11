@@ -70,21 +70,14 @@ int main(void) {
   // create sprite
   Sprite sprite = get_sprite(WINDOWWIDTH / 2, WINDOWHEIGHT / 2,
                              "resources/sprite1.png", renderer, window);
-  // SDL_Texture* sprite_texture =
-  //    get_texture("resources/rectangle.png", renderer, window);
-  // SDL_Rect sprite_rect = get_rect_from_texture(sprite_texture);
 
-  // sprite_rect.x = 0;
-  // sprite_rect.y = WINDOWHEIGHT / 2;
-  int direction = 1;
   int close_requested = 0;
   while (!close_requested) {
     SDL_Event event;
     // check if window should be closed
-    while ((!close_requested) &&
-           (direction == 1
-                ? sprite.rectangle.x + sprite.rectangle.w < WINDOWWIDTH
-                : sprite.rectangle.x > 0)) {
+    while (!close_requested) {
+
+      //check if some event occurred
       while (SDL_PollEvent(&event)) {
         switch (event.type) {
           case SDL_QUIT:
@@ -98,6 +91,11 @@ int main(void) {
             break;
         }
       }
+
+      // propagate movement of sprite accordingly
+      sprite_propagate_movement(&sprite);
+
+      // render background and sprite
       SDL_Point center = get_center(sprite.rectangle);
       SDL_RenderCopy(renderer, background_texture, NULL, NULL);
       if (SDL_RenderCopyEx(renderer, sprite.texture, NULL, &sprite.rectangle,
@@ -106,18 +104,19 @@ int main(void) {
         printf("error rendering texture: %s\n", SDL_GetError());
         return 1;
       }
-      // SDL_RenderCopy(renderer, sprite.texture, NULL, &sprite.rectangle);
+      
+      // switch rendering buffers
       SDL_RenderPresent(renderer);
 
-      // sprite.angle =
-      //     sprite.angle + 1 > 360 ? sprite.angle + 1 - 360 : sprite.angle + 1;
+      printf("angle: %f\n", sprite.angle);
 
+      // introduce delay to maintain 60FPS
       SDL_Delay(1000 / 60);
     }
-    direction *= -1;
   }
 
   // Clean Up
+  printf("cleaning up\n");
   free_sprite(&sprite);
   SDL_DestroyTexture(background_texture);
   clean_up(renderer, window);

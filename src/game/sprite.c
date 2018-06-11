@@ -30,15 +30,19 @@ void sprite_wasd_update_movement(Sprite* sprite, SDL_Scancode scancode,
   switch (scancode) {
     case SDL_SCANCODE_W:
       sprite->dfwd = (eventtype == SDL_KEYDOWN);
+      // printf("W: %d\n", (eventtype == SDL_KEYDOWN));
       break;
     case SDL_SCANCODE_A:
       sprite->dleft = (eventtype == SDL_KEYDOWN);
+      // printf("A: %d\n", (eventtype == SDL_KEYDOWN));
       break;
     case SDL_SCANCODE_S:
       sprite->dbckwd = (eventtype == SDL_KEYDOWN);
+      // printf("S: %d\n", (eventtype == SDL_KEYDOWN));
       break;
     case SDL_SCANCODE_D:
       sprite->dright = (eventtype == SDL_KEYDOWN);
+      // printf("D: %d\n", (eventtype == SDL_KEYDOWN));
       break;
     default:
       break;
@@ -52,22 +56,22 @@ void sprite_propagate_movement(Sprite* sprite) {
                         : sprite->angle - sprite->rotation_speed;
   }
   if (sprite->dright) {
-    sprite->angle = sprite->angle + sprite->rotation_speed > 360
+    sprite->angle = sprite->angle + sprite->rotation_speed >= 360
                         ? sprite->angle + sprite->rotation_speed - 360
                         : sprite->angle + sprite->rotation_speed;
   }
 
   if (sprite->dfwd) {
     sprite->rectangle.x -=
-        sin(to_radians(-sprite->angle)) * sprite->movement_speed;
+        round(sin(to_radians(-sprite->angle)) * sprite->movement_speed);
     sprite->rectangle.y -=
-        cos(to_radians(-sprite->angle)) * sprite->movement_speed;
+        round(cos(to_radians(-sprite->angle)) * sprite->movement_speed);
   }
   if (sprite->dbckwd) {
     sprite->rectangle.x +=
-        sin(to_radians(-sprite->angle)) * sprite->movement_speed;
+        round(sin(to_radians(-sprite->angle)) * sprite->movement_speed);
     sprite->rectangle.y +=
-        cos(to_radians(-sprite->angle)) * sprite->movement_speed;
+        round(cos(to_radians(-sprite->angle)) * sprite->movement_speed);
   }
 }
 
@@ -75,5 +79,4 @@ void sprite_keypress(Sprite* sprite, SDL_Event event) {
   SDL_Scancode scancode = event.key.keysym.scancode;
   SDL_EventType eventtype = event.type;
   sprite_wasd_update_movement(sprite, scancode, eventtype);
-  sprite_propagate_movement(sprite);
 }
