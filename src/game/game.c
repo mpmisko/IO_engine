@@ -1,9 +1,13 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "game.h"
 #include "utils.h"
+
+#ifndef APPLE
+int snprintf(char *STR, size_t SIZE, const char *FORMAT, ...);
+#endif
 
 #define WINDOWTITLE "Game Engine: Othello"
 #define WINDOWWIDTH 1440
@@ -91,7 +95,8 @@ void render_game(Game* game, Sprite* sprites, int num_sprites) {
 
   if (game->render_fps) {
     SDL_Color White = {255, 255, 255, 255};
-    char fps_str[8];
+    char *fps_str;
+    fps_str = malloc(8);
     snprintf(fps_str, 7, "%d fps", game->fps);
     SDL_Texture* fps_texture = get_text_texture(fps_str, White, game->renderer);
     SDL_Rect texture_rect;
