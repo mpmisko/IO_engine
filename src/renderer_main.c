@@ -15,39 +15,28 @@ int main(void) {
   // draw the image to the window
   // First draw texture to the copy of renderer and then swap the buffers
 
-  // create sprite
-  Sprite sprite = get_sprite(WINDOWWIDTH / 2, WINDOWHEIGHT / 2,
-                             "resources/sprite1.png", game);
+  // create sprites
+  Sprite sprites[] = {get_sprite(WINDOWWIDTH / 3, WINDOWHEIGHT / 2,
+                                 "resources/sprite1.png", game),
+                      get_sprite(2 * WINDOWWIDTH / 3, WINDOWHEIGHT / 2,
+                                 "resources/sprite2.png", game)};
+  set_controls(&sprites[0], wasd, NULL);
+  set_controls(&sprites[1], arrows, NULL);
 
-  int close_requested = 0;
-  while (!close_requested) {
-    SDL_Event event;
-    // check if window should be closed
-    while (!close_requested) {
-      // check if some event occurred
-      while (SDL_PollEvent(&event)) {
-        switch (event.type) {
-          case SDL_QUIT:
-            close_requested = 1;
-            break;
-          case SDL_KEYUP:
-          case SDL_KEYDOWN:
-            sprite_keypress(&sprite, event);
-            break;
-          default:
-            break;
-        }
-      }
+  while (!game->close_requested) {
+    // process events
+    process_events(game, sprites, 2);
 
-      // propagate movement of sprite accordingly
-      sprite_propagate_movement(&sprite);
+    // propagate movement of sprite accordingly
+    sprite_propagate_movement(sprites);
+    sprite_propagate_movement(sprites + 1);
 
-      render_game(game, &sprite, 1);
-    }
+    render_game(game, sprites, 2);
   }
 
   // Clean Up
   printf("cleaning up\n");
-  free_sprite(&sprite);
+  free_sprite(&sprites[0]);
+  free_sprite(&sprites[1]);
   delete_game(game);
 }

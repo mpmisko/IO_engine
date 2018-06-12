@@ -57,6 +57,7 @@ Game* init_game() {
   game->render_fps = 1;
   game->width = WINDOWWIDTH;
   game->height = WINDOWHEIGHT;
+  game->close_requested = 0;
 
   return game;
 }
@@ -103,6 +104,25 @@ void render_game(Game* game, Sprite* sprites, int num_sprites) {
   }
 
   SDL_RenderPresent(game->renderer);
+}
+
+void process_events(Game* game, Sprite* sprites, int num_sprites) {
+  SDL_Event event;
+  while (SDL_PollEvent(&event)) {
+    switch (event.type) {
+      case SDL_QUIT:
+        game->close_requested = 1;
+        break;
+      case SDL_KEYUP:
+      case SDL_KEYDOWN:
+        for (int i = 0; i < num_sprites; i++) {
+          sprite_keypress(sprites + i, event);
+        }
+        break;
+      default:
+        break;
+    }
+  }
 }
 
 void delete_game(Game* game) {
