@@ -4,9 +4,7 @@
  * Structure definitions.
  */
 
-//definition comes later
-static obj_sprite_t *shot_sprite;
-static obj_sprite_t *player_sprite;
+enum types {PLAYER, SHOT, TREE};
 
 
 typedef struct player {
@@ -29,21 +27,20 @@ typedef struct shot {
   obj_sprite_t *obj_sprite;
 } shot_t;
 
-typedef struct shoot_listener {
-  bool (*conditions[])(player_t*);
-  void (*actions[])(player_t *player, game_t *game);
-} shoot_listener_t;
-
-typedef struct shot_listener {
-  bool (*conditions[])(player_t *player, shot_t *shot);
-  void (*actions[])(player_t *player, shot_t *shot);
-} shot_listener_t;
-
 /*
  * Structure initialisation and freeing.
  */
 
-player_t *create_player(int health, int power, int speed, int score, controls_t *control, obj_sprite_t *sprite) {
+obj_sprite_t *player_sprite() {
+  obj_sprite_t *p_sprite = malloc(sizeof(struct sprite_o));
+
+  p_sprite->speed = 5;
+  p_sprite->x = 10;
+  p_sprite->y = 15;
+}
+
+
+void *create_player(game_t *game, int health, int power, int speed, int score, controls_t *control) {
   player_t *player = malloc(sizeof(struct player));
 
   if(!player) {
@@ -55,41 +52,17 @@ player_t *create_player(int health, int power, int speed, int score, controls_t 
   player->power = power;
   player->score = score;
   player->speed = speed;
-  player->obj_sprite = sprite;
+  player->obj_sprite = player_sprite();
 
-  return player;
+  add_object(game, player, PLAYER);
 }
 
 void destroy_player(player_t *player) {
-  //remove sprite only if it is different from the global sprite
-  if(player->obj_sprite != player_sprite) {
-    free(player->obj_sprite);
-  }
+  free(player->obj_sprite);
   free(player);
 }
 
-void destroy_shot(shot_t *shot) {
-  //remove sprite only if it is different from the global sprite
-  if(shot->obj_sprite != shot_sprite) {
-    free(shot->obj_sprite);
-  }
-  free(shot);
-}
-
-tree_t *create_tree(int height, obj_sprite_t *sprite) {
-  tree_t *tree = malloc(sizeof(struct tree));
-
-  if(!tree) {
-    return NULL;
-  }
-
-  tree->height = height;
-  tree->obj_sprite = sprite;
-
-  return tree;
-}
-
-shot_t *create_shot(int power, obj_sprite_t *sprite) {
+void *create_shot(game_t *game, int power, obj_sprite_t *sprite) {
   shot_t *shot = malloc(sizeof(struct shot));
 
   if(!shot) {
@@ -99,29 +72,43 @@ shot_t *create_shot(int power, obj_sprite_t *sprite) {
   shot->power = power;
   shot->obj_sprite = sprite;
 
-  return shot;
+  add_object(game, shot, SHOT);
 }
 
-void shoot_action(player_t *player, game_t *game) {
-  shot_t *shot = create_shot(player->power, shot_sprite);
-  list_append(game->environment_objects, shot);
+void destroy_shot(shot_t *shot) {
+  free(shot->obj_sprite);
+  free(shot);
 }
 
-bool shoot_condition(player_t *player) {
-  return player->health > 5;
-}
+void *create_tree(game_t *game, int height, obj_sprite_t *sprite) {
+  tree_t *tree = malloc(sizeof(struct tree));
 
-shoot_listener_t *create_shoot_event() {
-  shoot_listener_t *event = malloc(sizeof(shoot_listener_t));
-
-  if(!event) {
+  if (!tree) {
     return NULL;
   }
 
-  event->actions = {&shoot_action};
-  event->conditions = {&shoot_condition};
+  tree->height = height;
+  tree->obj_sprite = sprite;
 
-  return event;
+  add_object(game, tree, TREE);
+}
+
+void shoot_action(game_t *game, env_obj_t *obj1) {
+  player_t *p = (player_t*) obj1;
+  obj_sprite_t *shot_sprite = malloc(sizeof(struct sprite_o));
+  shot_sprite->x = p->obj_sprite->x;
+  shot_sprite->y = p->obj_sprite->y;
+  shot_sprite->speed = 100;
+
+  create_shot(game, p->power, shot_sprite);
+}
+
+bool shoot_condition(game_t *game, env_obj_t *obj1) {
+  if(obj1->type != PLAYER) {
+    return false;
+  }
+  player_t *p = (player_t*) obj1;
+  return (p->power > 10) && (is_clicked(obj1))
 }
 
 void shot_action(player_t *player, shot_t *shot) {
@@ -139,17 +126,3 @@ long distance(obj_sprite_t *obj1, obj_sprite_t *obj2) {
 bool shot_condition(player_t *player, shot_t *shot) {
   return distance(player->obj_sprite, shot->obj_sprite) < 5;
 }
-
-shot_listener_t *create_shot_event() {
-  shot_listener_t *event = malloc(sizeof(shot_listener_t));
-
-  if(!event) {
-    return NULL;
-  }
-
-  event->actions = {&shot_action};
-  event->conditions = {&shot_condition};
-
-  return event;
-}
-
