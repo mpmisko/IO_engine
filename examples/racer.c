@@ -2,7 +2,7 @@
 #include "../lib/io_lib.h"
 #include "../src/renderer_main.h"
 
-#define BACKGROUND_PATH "resources/background.jpg"
+#define BACKGROUND_PATH "resources/racer/map.png"
 #define WINDOWWIDTH 1440
 #define WINDOWHEIGHT 800
 
@@ -22,6 +22,30 @@ struct local_variables {
   int id1;
   int id2;
 };
+
+bool detect_black(Game* game, env_obj_t* obj) {
+  return ((obj->type == player) &&
+          is_black(
+              game,
+              obj->sprite->rectangle.x + get_center(obj->sprite->rectangle).x,
+              obj->sprite->rectangle.y + get_center(obj->sprite->rectangle).y));
+}
+
+bool detect_not_black(Game* game, env_obj_t* obj) {
+  return ((obj->type == player) &&
+          !is_black(
+              game,
+              obj->sprite->rectangle.x + get_center(obj->sprite->rectangle).x,
+              obj->sprite->rectangle.y + get_center(obj->sprite->rectangle).y));
+}
+
+void slow_down(Game* game, env_obj_t* obj) {
+  ((Player*)obj->object)->movement_speed = 1;
+}
+
+void speed_up(Game* game, env_obj_t* obj) {
+  ((Player*)obj->object)->movement_speed = 12;
+}
 
 bool move_fwd_cond(Game* game, env_obj_t* obj) {
   struct local_variables lv = *(struct local_variables*)game->user_variables;
@@ -104,19 +128,21 @@ int main(void) {
   Player p1 = {100, 0, 0, 0, 0, 7.5, 12};
 
   // create sprites
-  lv.id1 = add_object(game, &p1, empty,
-                      get_sprite(WINDOWWIDTH / 3, WINDOWHEIGHT / 2,
+  lv.id1 = add_object(game, &p1, player,
+                      get_sprite(100, 700,
                                  "resources/sprite1.png", game));
 
   Player p2 = {100, 0, 0, 0, 0, 7.5, 12};
-  lv.id2 = add_object(game, &p2, empty,
-                      get_sprite(2 * WINDOWWIDTH / 3, WINDOWHEIGHT / 2,
+  lv.id2 = add_object(game, &p2, player,
+                      get_sprite(150, 700,
                                  "resources/sprite2.png", game));
 
   add_single_listener(game, move_fwd_cond, move_fwd);
   add_single_listener(game, move_bckwd_cond, move_bckwd);
   add_single_listener(game, move_left_cond, move_left);
   add_single_listener(game, move_right_cond, move_right);
+  add_single_listener(game, detect_black, slow_down);
+  add_single_listener(game, detect_not_black, speed_up);
 
   game->user_variables = &lv;
 

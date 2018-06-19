@@ -57,6 +57,7 @@ Game* init_game() {
   game->window = init_window();
   game->renderer = init_renderer(game->window);
   game->background_texture = NULL;
+  game->background_surface = NULL;
   game->fps = 0;  // default value
   game->last_render_ticks = 0;
   game->render_fps = 1;
@@ -74,6 +75,13 @@ Game* init_game() {
 }
 
 void set_background(Game* game, char* path_to_texture) {
+  SDL_Surface* surface = IMG_Load(path_to_texture);
+  if (!surface) {
+    perror("IMG_Load Failed\n");
+    return;
+  }
+  game->background_surface = surface;
+
   game->background_texture = get_texture(path_to_texture, game->renderer);
   if (game->background_texture == NULL) {
     perror("Setting background texture failed\n");
@@ -279,6 +287,40 @@ void listen(Game* game) {
       apply_double_listener(game, l->listener);
     }
   }
+}
+
+Uint32 getpixel(SDL_Surface* surface, int x, int y) {
+  int bpp = surface->format->BytesPerPixel;
+  /* Here p is the address to the pixel we want to retrieve */
+  Uint8* p = (Uint8*)surface->pixels + y * surface->pitch + x * bpp;
+
+  switch (bpp) {
+    case 1:
+      return *p;
+      break;
+
+    case 2:
+      return *(Uint16*)p;
+      break;
+
+    case 3:
+      if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+        return p[0] << 16 | p[1] << 8 | p[2];
+      else
+        return p[0] | p[1] << 8 | p[2] << 16;
+      break;
+
+    case 4:
+      return *(Uint32*)p;
+      break;
+
+    default:
+      return 0; /* shouldn't happen, but avoids warnings */
+  }
+}
+
+int is_black(Game* game, int x, int y) {
+  return getpixel(game->background_surface, x, y) == 0;
 }
 
 void delete_game(Game* game) {

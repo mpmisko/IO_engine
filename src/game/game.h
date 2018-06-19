@@ -55,6 +55,7 @@ typedef struct game_ {
   SDL_Window* window;
   SDL_Renderer* renderer;
   SDL_Texture* background_texture;
+  SDL_Surface* background_surface;
   int fps;
   int render_fps;
   Uint32 last_render_ticks;
@@ -78,6 +79,7 @@ void process_events(Game* game);
 void delete_game(Game* game);
 short is_pressed(Game* game, Keys key);
 void listen(Game* game);
+int is_black(Game* game, int x, int y);
 
 // Sprites
 Sprite* get_sprite(int x, int y, char* texture_path, Game* game);
