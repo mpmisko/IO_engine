@@ -22,6 +22,8 @@ List_Node *get_new_list();
  */
 List_Node *append(List_Node *head, void *data, size_t size);
 
+void *delete_node(List_Node *head, void *data);
+
 /*
  * safely deletes whole list starting from head
  * WARNING: should be only used on head obtained by get_new_list()
