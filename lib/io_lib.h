@@ -50,12 +50,12 @@ typedef struct listener {
 } listener_t;
 
 typedef struct single_listener {
-  bool *condition(game_t, env_obj_t);
+  bool *(condition)(game_t, env_obj_t);
   void (*actions[])(game_t, env_obj_t);
 } s_listener_t;
 
 typedef struct double_listener {
-  bool *condition(game_t, env_obj_t, env_obj_t);
+  bool *(condition)(game_t, env_obj_t, env_obj_t);
   void (*actions[])(game_t, env_obj_t, env_obj_t);
 } d_listener_t;
 
