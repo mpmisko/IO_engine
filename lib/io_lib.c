@@ -13,32 +13,30 @@ void add_object(game_t *game, void *object, int type) {
   append(game->objects, env_obj);
 }
 
-void add_single_listener(game_t *game, bool (*conditions[])(game_t*, env_obj_t*),
-                         int num_conds, void (*actions[])(game_t*, env_obj_t*), int num_actions) {
+void add_single_listener(game_t *game, bool (*condition)(game_t*, env_obj_t*),
+void (*actions[])(game_t*, env_obj_t*), int num_actions) {
   listener_t *lnr = malloc(sizeof(struct listener));
   lnr->arg_num = SINGLE_ARG_LISTENER;
   lnr->act_num = num_actions;
-  lnr->cond_num = num_conds;
 
   s_listener_t *sin_lnr = malloc(sizeof(struct single_listener));
-  sin_lnr->conditions = conditions;
+  sin_lnr->condition = condition;
   sin_lnr->actions = actions;
 
   lnr->listener = sin_lnr;
   append(game->listeners, lnr);
 }
 
-void add_double_listener(game_t game, bool (*conditions[])(game_t*, env_obj_t*, env_obj_t*),
+void add_double_listener(game_t game, bool (*condition)(game_t*, env_obj_t*, env_obj_t*),
                          int num_conds, void (*actions[])(game_t*, env_obj_t*, env_obj_t*), int num_actions) {
   listener_t *lnr = malloc(sizeof(struct listener));
   lnr->arg_num = DOUBLE_ARG_LISTENER;
   lnr->act_num = num_actions;
-  lnr->cond_num = num_conds;
 
   d_listener_t *doub_lnr = malloc(sizeof(struct double_listener));
-  sin_lnr->conditions = conditions;
-  sin_lnr->actions = actions;
+  doub_lnr->condition = condition;
+  doub_lnr->actions = actions;
 
-  lnr->listener = sin_lnr;
+  lnr->listener = doub_lnr;
   append(game->listeners, lnr);
 }

@@ -20,7 +20,7 @@ List_Node *append(List_Node *head, void *data, size_t size) {
   } else {
     while (head->next) {  // iterate to the end of the list
       head = head->next;
-    }
+    }=
   }
   head->next = allocate_new_node();
   List_Node *new_node = head->next;

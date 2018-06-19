@@ -33,7 +33,6 @@ typedef struct environment_object {
   obj_sprite_t *sprite;
 } env_obj_t;
 
-
 typedef struct game {
   game_sprite_t game_sprite;
 
@@ -43,31 +42,30 @@ typedef struct game {
 
 typedef struct listener {
   int arg_num;
-  int cond_num;
   int act_num;
   void *listener;
 } listener_t;
 
 typedef struct single_listener {
-  bool (*conditions[])(game_t, env_obj_t);
+  bool *condition(game_t, env_obj_t);
   void (*actions[])(game_t, env_obj_t);
 } s_listener_t;
 
 typedef struct double_listener {
-  bool (*conditions[])(game_t, env_obj_t, env_obj_t);
+  bool *condition(game_t, env_obj_t, env_obj_t);
   void (*actions[])(game_t, env_obj_t, env_obj_t);
 } d_listener_t;
 
 
-void initialise_game(game_t *game, env_obj_t *objects, listener_t *listener, int  num_listeners);
+void initialise_game(game_t *game, env_obj_t *objects, listener_t *listener, int num_listeners);
 
 void add_object(game_t *game, void *object, int type);
 
-void add_single_listener(game_t *game, bool (*conditions[])(game_t*, env_obj_t*),
-                         int num_conds, void (*actions[])(game_t*, env_obj_t*), int num_actions);
+void add_single_listener(game_t *game, bool *condition(game_t*, env_obj_t*),
+                         void (*actions[])(game_t*, env_obj_t*), int num_actions);
 
-void add_double_listener(game_t *game, bool (*conditions[])(game_t*, env_obj_t*, env_obj_t*),
-                         int num_conds, void (*actions[])(game_t*, env_obj_t*, env_obj_t*), int num_actions);
+void add_double_listener(game_t *game, bool *condition(game_t*, env_obj_t*, env_obj_t*),
+                         void (*actions[])(game_t*, env_obj_t*, env_obj_t*), int num_actions);
 
 env_obj_t get_environment_object(void *obj, int type);
 

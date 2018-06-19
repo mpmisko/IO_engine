@@ -108,7 +108,7 @@ bool shoot_condition(game_t *game, env_obj_t *obj1) {
     return false;
   }
   player_t *p = (player_t*) obj1;
-  return (p->power > 10) && (is_clicked(obj1))
+  return (p->power > 10) && (is_clicked(obj1));
 }
 
 void shot_action(player_t *player, shot_t *shot) {
