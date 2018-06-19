@@ -1,0 +1,54 @@
+{
+  "player" : {
+    "controls": {
+      "shooting": "on",
+      "movement": "arrow_key_mode"
+    },
+    "render_properties": {
+      "texture": "./path_to_texture"
+    },
+    "game_properties": ["health": {
+                          "initial_val": 100         
+                        }, 
+                        "score": {
+                          "initial_val": 0        
+                        },
+                        "speed": {
+                          "initial_val": 2
+                        }, 
+                        "power": {
+                          "initial_val": 50
+                        }]
+   },
+   "enviromnet objects": {
+     "shot": {
+       "render_properties" : {
+         "texture": "./path_to_texture"
+       },
+       "game_properites": "default_shot_proprties"
+     },
+       "tree": {
+         "render_properties": {
+           "texture": "./path_to_texture"
+         },
+         "game_properties": ["height"]
+       }
+   },
+   "events" : {
+     "shoot_event": {
+       "participants": "default_shooting_participants",
+       "conditions": "default_shooting_conditions",
+       "actions": ["shoot_action"]
+     },
+     "shot_event": {
+       "participants": "default_shot_participants",
+       "conditions": "default_shot_conditions",
+       "actions": ["shot_action"]
+     },
+     "tree_collision_event": {
+       "participants": ["tree", "player"],
+       "conditions": ["tree_collision_cond1", "tree_collision_cond2"],
+       "actions": ["tree_collided_action", "game_slowdown_action"]
+     } 
+   }
+}
