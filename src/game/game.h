@@ -49,10 +49,6 @@ typedef struct sprite_ {
   SDL_Rect rectangle;
   SDL_Texture* texture;
   double angle;
-  int dfwd;
-  int dright;
-  int dleft;
-  int dbckwd;
   double rotation_speed;
   int movement_speed;
   Controls controls;
@@ -85,6 +81,7 @@ void render_game(Game* game);
 void process_events(Game* game);
 void delete_game(Game* game);
 short is_pressed(Game* game, Keys key);
+void listen(Game* game);
 
 // Sprites
 Sprite* get_sprite(int x, int y, char* texture_path, Game* game);

@@ -63,6 +63,7 @@ Game* init_game() {
   game->width = WINDOWWIDTH;
   game->height = WINDOWHEIGHT;
   game->close_requested = 0;
+  memset(game->pressed_keys, 0, NUMKEYS * sizeof(short));
 
   game->listeners = get_new_list();
   game->objects = get_new_list();
@@ -92,9 +93,8 @@ void render_game(Game* game) {
     s_curr = s_curr->next;
     Sprite* s = ((env_obj_t*)s_curr->data)->sprite;
     SDL_Point center = get_center(s->rectangle);
-    if (SDL_RenderCopyEx(game->renderer, s->texture, NULL,
-                         &s->rectangle, s->angle, &center,
-                         SDL_FLIP_NONE)) {
+    if (SDL_RenderCopyEx(game->renderer, s->texture, NULL, &s->rectangle,
+                         s->angle, &center, SDL_FLIP_NONE)) {
       perror("Unable to render sprite");
     }
   }
@@ -122,7 +122,7 @@ void render_game(Game* game) {
 }
 
 void process_key_change(Game* game, SDL_Event event) {
-  switch(event.key.keysym.scancode) {
+  switch (event.key.keysym.scancode) {
     case SDL_SCANCODE_A:
       game->pressed_keys[A] = (event.type == SDL_KEYDOWN);
       break;
@@ -235,8 +235,31 @@ void process_events(Game* game) {
   }
 }
 
-short is_pressed(Game* game, Keys key) {
-  return game->pressed_keys[key];
+void apply_single_listener(Game* game, s_listener_t* sl) {
+  List_Node* o_curr = game->objects;
+
+  while (o_curr && o_curr->next) {
+    o_curr = o_curr->next;
+    env_obj_t* e_obj = (env_obj_t*)o_curr->data;
+    if ((*sl->condition)(game, e_obj)) {
+      (*sl->action)(game, e_obj);
+    }
+  }
+}
+
+short is_pressed(Game* game, Keys key) { return game->pressed_keys[key]; }
+
+void listen(Game* game) {
+  List_Node* l_curr = game->listeners;
+
+  while (l_curr && l_curr->next) {
+    l_curr = l_curr->next;
+    listener_t* l = (listener_t*)l_curr->data;
+
+    if (l->arg_num == 1) {
+      apply_single_listener(game, l->listener);
+    }
+  }
 }
 
 void delete_game(Game* game) {

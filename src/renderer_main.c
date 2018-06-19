@@ -8,6 +8,7 @@ int start_game(Game* game) {
     // propagate movement of sprite accordingly
     // sprite_propagate_movement(sprites);
     // sprite_propagate_movement(sprites + 1);
+    listen(game);
 
     render_game(game);
   }

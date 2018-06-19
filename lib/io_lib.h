@@ -41,12 +41,12 @@ typedef struct listener {
 
 typedef struct single_listener {
   bool (*condition)(Game*, env_obj_t*);
-  void (*actions)(Game*, env_obj_t*);
+  void (*action)(Game*, env_obj_t*);
 } s_listener_t;
 
 typedef struct double_listener {
   bool (*condition)(Game*, env_obj_t*, env_obj_t*);
-  void (*actions)(Game*, env_obj_t*, env_obj_t*);
+  void (*action)(Game*, env_obj_t*, env_obj_t*);
 } d_listener_t;
 
 

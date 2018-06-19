@@ -23,7 +23,7 @@ void add_single_listener(Game *game, bool (*condition)(Game *, env_obj_t *),
 
   s_listener_t *sin_lnr = malloc(sizeof(struct single_listener));
   sin_lnr->condition = condition;
-  sin_lnr->actions = actions;
+  sin_lnr->action = actions;
 
   lnr->listener = sin_lnr;
   append(game->listeners, lnr, sizeof(struct listener));
@@ -37,7 +37,7 @@ void add_double_listener(Game *game,
 
   d_listener_t *doub_lnr = malloc(sizeof(struct double_listener));
   doub_lnr->condition = condition;
-  doub_lnr->actions = actions;
+  doub_lnr->action = actions;
 
   lnr->listener = doub_lnr;
   append(game->listeners, lnr, sizeof(struct listener));
