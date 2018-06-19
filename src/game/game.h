@@ -6,7 +6,44 @@
 #include <SDL2/SDL_timer.h>
 #include <SDL2/SDL_ttf.h>
 
+#include "../utils/linked_list/linked_list.h"
+
 typedef enum { wasd = 0, arrows = 1, ijkl = 2, tfgh = 3, custom = 4 } Controls;
+
+#define NUMKEYS 30
+
+typedef enum {
+  A,
+  B,
+  C,
+  D,
+  E,
+  F,
+  G,
+  H,
+  I,
+  J,
+  K,
+  L,
+  M,
+  N,
+  O,
+  P,
+  Q,
+  R,
+  S,
+  T,
+  U,
+  V,
+  W,
+  X,
+  Y,
+  Z,
+  UP,
+  DOWN,
+  LEFT,
+  RIGHT
+} Keys;
 
 typedef struct sprite_ {
   SDL_Rect rectangle;
@@ -33,17 +70,24 @@ typedef struct game_ {
   int height;
   int close_requested;
   // size of window
+
+  List_Node* listeners;
+  List_Node* objects;
+
+  void* user_variables;
+  short pressed_keys[NUMKEYS];
 } Game;
 
 // Game
 Game* init_game();
 void set_background(Game* game, char* path_to_texture);
-void render_game(Game* game, Sprite* sprites, int num_sprites);
-void process_events(Game* game, Sprite* sprites, int num_sprites);
+void render_game(Game* game);
+void process_events(Game* game);
 void delete_game(Game* game);
+short is_pressed(Game* game, Keys key);
 
 // Sprites
-Sprite get_sprite(int x, int y, char* texture_path, Game* game);
+Sprite* get_sprite(int x, int y, char* texture_path, Game* game);
 void free_sprite(Sprite* sprite);
 void sprite_keypress(Sprite* sprite, SDL_Event event);
 void sprite_propagate_movement(Sprite* sprite);

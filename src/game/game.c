@@ -1,12 +1,13 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 
+#include "../../lib/io_lib.h"
 #include "game.h"
 #include "utils.h"
 
 #ifndef APPLE
-int snprintf(char *STR, size_t SIZE, const char *FORMAT, ...);
+int snprintf(char* STR, size_t SIZE, const char* FORMAT, ...);
 #endif
 
 #define WINDOWTITLE "Game Engine: Othello"
@@ -63,6 +64,11 @@ Game* init_game() {
   game->height = WINDOWHEIGHT;
   game->close_requested = 0;
 
+  game->listeners = get_new_list();
+  game->objects = get_new_list();
+
+  game->user_variables = NULL;
+
   return game;
 }
 
@@ -73,17 +79,21 @@ void set_background(Game* game, char* path_to_texture) {
   }
 }
 
-void render_game(Game* game, Sprite* sprites, int num_sprites) {
+void render_game(Game* game) {
   if (game->background_texture != NULL) {
     SDL_RenderCopy(game->renderer, game->background_texture, NULL, NULL);
   } else {
     SDL_RenderClear(game->renderer);
   }
 
-  for (int i = 0; i < num_sprites; ++i) {
-    SDL_Point center = get_center(sprites[i].rectangle);
-    if (SDL_RenderCopyEx(game->renderer, sprites[i].texture, NULL,
-                         &sprites[i].rectangle, sprites[i].angle, &center,
+  List_Node* s_curr = game->objects;
+
+  while (s_curr && s_curr->next) {
+    s_curr = s_curr->next;
+    Sprite* s = ((env_obj_t*)s_curr->data)->sprite;
+    SDL_Point center = get_center(s->rectangle);
+    if (SDL_RenderCopyEx(game->renderer, s->texture, NULL,
+                         &s->rectangle, s->angle, &center,
                          SDL_FLIP_NONE)) {
       perror("Unable to render sprite");
     }
@@ -95,7 +105,7 @@ void render_game(Game* game, Sprite* sprites, int num_sprites) {
 
   if (game->render_fps) {
     SDL_Color White = {255, 255, 255, 255};
-    char *fps_str;
+    char* fps_str;
     fps_str = malloc(8);
     snprintf(fps_str, 7, "%d fps", game->fps);
     SDL_Texture* fps_texture = get_text_texture(fps_str, White, game->renderer);
@@ -111,7 +121,104 @@ void render_game(Game* game, Sprite* sprites, int num_sprites) {
   SDL_RenderPresent(game->renderer);
 }
 
-void process_events(Game* game, Sprite* sprites, int num_sprites) {
+void process_key_change(Game* game, SDL_Event event) {
+  switch(event.key.keysym.scancode) {
+    case SDL_SCANCODE_A:
+      game->pressed_keys[A] = (event.type == SDL_KEYDOWN);
+      break;
+    case SDL_SCANCODE_B:
+      game->pressed_keys[B] = (event.type == SDL_KEYDOWN);
+      break;
+    case SDL_SCANCODE_C:
+      game->pressed_keys[C] = (event.type == SDL_KEYDOWN);
+      break;
+    case SDL_SCANCODE_D:
+      game->pressed_keys[D] = (event.type == SDL_KEYDOWN);
+      break;
+    case SDL_SCANCODE_E:
+      game->pressed_keys[E] = (event.type == SDL_KEYDOWN);
+      break;
+    case SDL_SCANCODE_F:
+      game->pressed_keys[F] = (event.type == SDL_KEYDOWN);
+      break;
+    case SDL_SCANCODE_G:
+      game->pressed_keys[G] = (event.type == SDL_KEYDOWN);
+      break;
+    case SDL_SCANCODE_H:
+      game->pressed_keys[H] = (event.type == SDL_KEYDOWN);
+      break;
+    case SDL_SCANCODE_I:
+      game->pressed_keys[I] = (event.type == SDL_KEYDOWN);
+      break;
+    case SDL_SCANCODE_J:
+      game->pressed_keys[J] = (event.type == SDL_KEYDOWN);
+      break;
+    case SDL_SCANCODE_K:
+      game->pressed_keys[K] = (event.type == SDL_KEYDOWN);
+      break;
+    case SDL_SCANCODE_L:
+      game->pressed_keys[L] = (event.type == SDL_KEYDOWN);
+      break;
+    case SDL_SCANCODE_M:
+      game->pressed_keys[M] = (event.type == SDL_KEYDOWN);
+      break;
+    case SDL_SCANCODE_N:
+      game->pressed_keys[N] = (event.type == SDL_KEYDOWN);
+      break;
+    case SDL_SCANCODE_O:
+      game->pressed_keys[O] = (event.type == SDL_KEYDOWN);
+      break;
+    case SDL_SCANCODE_P:
+      game->pressed_keys[P] = (event.type == SDL_KEYDOWN);
+      break;
+    case SDL_SCANCODE_Q:
+      game->pressed_keys[Q] = (event.type == SDL_KEYDOWN);
+      break;
+    case SDL_SCANCODE_R:
+      game->pressed_keys[R] = (event.type == SDL_KEYDOWN);
+      break;
+    case SDL_SCANCODE_S:
+      game->pressed_keys[S] = (event.type == SDL_KEYDOWN);
+      break;
+    case SDL_SCANCODE_T:
+      game->pressed_keys[T] = (event.type == SDL_KEYDOWN);
+      break;
+    case SDL_SCANCODE_U:
+      game->pressed_keys[U] = (event.type == SDL_KEYDOWN);
+      break;
+    case SDL_SCANCODE_V:
+      game->pressed_keys[V] = (event.type == SDL_KEYDOWN);
+      break;
+    case SDL_SCANCODE_W:
+      game->pressed_keys[W] = (event.type == SDL_KEYDOWN);
+      break;
+    case SDL_SCANCODE_X:
+      game->pressed_keys[X] = (event.type == SDL_KEYDOWN);
+      break;
+    case SDL_SCANCODE_Y:
+      game->pressed_keys[Y] = (event.type == SDL_KEYDOWN);
+      break;
+    case SDL_SCANCODE_Z:
+      game->pressed_keys[Z] = (event.type == SDL_KEYDOWN);
+      break;
+    case SDL_SCANCODE_UP:
+      game->pressed_keys[UP] = (event.type == SDL_KEYDOWN);
+      break;
+    case SDL_SCANCODE_DOWN:
+      game->pressed_keys[DOWN] = (event.type == SDL_KEYDOWN);
+      break;
+    case SDL_SCANCODE_LEFT:
+      game->pressed_keys[LEFT] = (event.type == SDL_KEYDOWN);
+      break;
+    case SDL_SCANCODE_RIGHT:
+      game->pressed_keys[RIGHT] = (event.type == SDL_KEYDOWN);
+      break;
+    default:
+      break;
+  }
+}
+
+void process_events(Game* game) {
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
     switch (event.type) {
@@ -120,14 +227,16 @@ void process_events(Game* game, Sprite* sprites, int num_sprites) {
         break;
       case SDL_KEYUP:
       case SDL_KEYDOWN:
-        for (int i = 0; i < num_sprites; i++) {
-          sprite_keypress(sprites + i, event);
-        }
+        process_key_change(game, event);
         break;
       default:
         break;
     }
   }
+}
+
+short is_pressed(Game* game, Keys key) {
+  return game->pressed_keys[key];
 }
 
 void delete_game(Game* game) {
@@ -136,4 +245,6 @@ void delete_game(Game* game) {
   SDL_DestroyWindow(game->window);
   SDL_Quit();
   TTF_Quit();
+  delete_list(game->listeners);
+  delete_list(game->objects);
 }

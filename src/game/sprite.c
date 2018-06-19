@@ -3,27 +3,30 @@
 #include "game.h"
 #include "utils.h"
 
-Sprite get_sprite(int x, int y, char* texture_path, Game* game) {
+Sprite* get_sprite(int x, int y, char* texture_path, Game* game) {
   SDL_Texture* texture = get_texture(texture_path, game->renderer);
 
-  Sprite s;
-  s.texture = texture;
-  s.rectangle = get_rect_from_texture(texture);
-  s.rectangle.x = x;
-  s.rectangle.y = y;
-  s.angle = 0;
-  s.dfwd = 0;
-  s.dleft = 0;
-  s.dright = 0;
-  s.dbckwd = 0;
-  s.rotation_speed = 7.5f;
-  s.movement_speed = 12;
-  s.controls = custom;
-  s.keypress_function = NULL;
+  Sprite* s = malloc(sizeof(Sprite));
+  s->texture = texture;
+  s->rectangle = get_rect_from_texture(texture);
+  s->rectangle.x = x;
+  s->rectangle.y = y;
+  s->angle = 0;
+  s->dfwd = 0;
+  s->dleft = 0;
+  s->dright = 0;
+  s->dbckwd = 0;
+  s->rotation_speed = 7.5f;
+  s->movement_speed = 12;
+  s->controls = custom;
+  s->keypress_function = NULL;
   return s;
 }
 
-void free_sprite(Sprite* sprite) { SDL_DestroyTexture(sprite->texture); }
+void free_sprite(Sprite* sprite) {
+  SDL_DestroyTexture(sprite->texture);
+  free(sprite);
+}
 
 void sprite_wasd_update_movement(Sprite* sprite, SDL_Scancode scancode,
                                  SDL_EventType eventtype) {
