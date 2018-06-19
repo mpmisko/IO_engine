@@ -9,7 +9,7 @@
 #define SINGLE_ARG_LISTENER 1
 #define DOUBLE_ARG_LISTENER 2
 
-typedef enum {WASD, arrow_key_mode, IJKL} control_mode_t;;
+typedef enum {WASD, arrow_key_mode, IJKL} control_mode_t;
 
 typedef struct controls {
   bool shooting;
@@ -39,8 +39,8 @@ typedef struct environment_object {
 typedef struct game {
   game_sprite_t *game_sprite;
 
-  List_Node listeners;
-  List_Node objects;
+  List_Node *listeners;
+  List_Node *objects;
 } game_t;
 
 typedef struct listener {
@@ -50,13 +50,13 @@ typedef struct listener {
 } listener_t;
 
 typedef struct single_listener {
-  bool *condition(game_t, env_obj_t);
-  void (*actions[])(game_t, env_obj_t);
+  bool (*condition)(game_t*, env_obj_t*);
+  void *(*actions)(game_t*, env_obj_t*);
 } s_listener_t;
 
 typedef struct double_listener {
-  bool *condition(game_t, env_obj_t, env_obj_t);
-  void (*actions[])(game_t, env_obj_t, env_obj_t);
+  bool (*condition)(game_t*, env_obj_t*, env_obj_t*);
+  void *(*actions)(game_t*, env_obj_t*, env_obj_t*);
 } d_listener_t;
 
 
@@ -64,10 +64,10 @@ void add_object(game_t *game, void *object, int type);
 
 void delete_object(game_t *game, void *object);
 
-void add_single_listener(game_t *game, bool *condition(game_t*, env_obj_t*),
-                         void (*actions[])(game_t*, env_obj_t*), int num_actions);
+void add_single_listener(game_t *game, bool (*condition)(game_t*, env_obj_t*),
+                         void *(*actions)(game_t*, env_obj_t*), int num_actions);
 
-void add_double_listener(game_t *game, bool *condition(game_t*, env_obj_t*, env_obj_t*),
-                         void (*actions[])(game_t*, env_obj_t*, env_obj_t*), int num_actions);
+void add_double_listener(game_t *game, bool (*condition)(game_t*, env_obj_t*, env_obj_t*),
+                         void *(*actions)(game_t*, env_obj_t*, env_obj_t*), int num_actions);
 
 #endif

@@ -4,7 +4,7 @@ void add_object(game_t *game, void *object, int type) {
   env_obj_t *env_obj = malloc(sizeof(struct environment_object));
   env_obj->type = type;
   env_obj->object = object;
-  append(game->objects, env_obj);
+  append(game->objects, env_obj, sizeof(struct environment_object));
 }
 
 void delete_object(game_t *game, void *object) {
@@ -12,7 +12,7 @@ void delete_object(game_t *game, void *object) {
 }
 
 void add_single_listener(game_t *game, bool (*condition)(game_t*, env_obj_t*),
-                         void (*actions[])(game_t*, env_obj_t*), int num_actions) {
+                         void *(*actions)(game_t*, env_obj_t*), int num_actions) {
   listener_t *lnr = malloc(sizeof(struct listener));
   lnr->arg_num = SINGLE_ARG_LISTENER;
   lnr->act_num = num_actions;
@@ -22,11 +22,11 @@ void add_single_listener(game_t *game, bool (*condition)(game_t*, env_obj_t*),
   sin_lnr->actions = actions;
 
   lnr->listener = sin_lnr;
-  append(game->listeners, lnr);
+  append(game->listeners, lnr, sizeof(struct listener));
 }
 
-void add_double_listener(game_t game, bool (*condition)(game_t*, env_obj_t*, env_obj_t*),
-                         void (*actions[])(game_t*, env_obj_t*, env_obj_t*), int num_actions) {
+void add_double_listener(game_t *game, bool (*condition)(game_t*, env_obj_t*, env_obj_t*),
+                         void *(*actions)(game_t*, env_obj_t*, env_obj_t*), int num_actions) {
   listener_t *lnr = malloc(sizeof(struct listener));
   lnr->arg_num = DOUBLE_ARG_LISTENER;
   lnr->act_num = num_actions;
@@ -36,6 +36,6 @@ void add_double_listener(game_t game, bool (*condition)(game_t*, env_obj_t*, env
   doub_lnr->actions = actions;
 
   lnr->listener = doub_lnr;
-  append(game->listeners, lnr);
+  append(game->listeners, lnr, sizeof(struct listener));
 }
 
