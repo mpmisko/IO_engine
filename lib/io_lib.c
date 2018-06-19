@@ -11,9 +11,8 @@ void delete_object(game_t *game, void *object) {
   delete_node(game->objects, object);
 }
 
-
 void add_single_listener(game_t *game, bool (*condition)(game_t*, env_obj_t*),
-void (*actions[])(game_t*, env_obj_t*), int num_actions) {
+                         void (*actions[])(game_t*, env_obj_t*), int num_actions) {
   listener_t *lnr = malloc(sizeof(struct listener));
   lnr->arg_num = SINGLE_ARG_LISTENER;
   lnr->act_num = num_actions;
@@ -27,7 +26,7 @@ void (*actions[])(game_t*, env_obj_t*), int num_actions) {
 }
 
 void add_double_listener(game_t game, bool (*condition)(game_t*, env_obj_t*, env_obj_t*),
-                         int num_conds, void (*actions[])(game_t*, env_obj_t*, env_obj_t*), int num_actions) {
+                         void (*actions[])(game_t*, env_obj_t*, env_obj_t*), int num_actions) {
   listener_t *lnr = malloc(sizeof(struct listener));
   lnr->arg_num = DOUBLE_ARG_LISTENER;
   lnr->act_num = num_actions;
