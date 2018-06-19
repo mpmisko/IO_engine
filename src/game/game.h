@@ -49,10 +49,6 @@ typedef struct sprite_ {
   SDL_Rect rectangle;
   SDL_Texture* texture;
   double angle;
-  double rotation_speed;
-  int movement_speed;
-  Controls controls;
-  void (*keypress_function)(struct sprite_*, SDL_Scancode, SDL_EventType);
 } Sprite;
 
 typedef struct game_ {

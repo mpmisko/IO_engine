@@ -247,6 +247,23 @@ void apply_single_listener(Game* game, s_listener_t* sl) {
   }
 }
 
+void apply_double_listener(Game* game, d_listener_t* dl) {
+  List_Node* o_curr1 = game->objects;
+
+  while (o_curr1 && o_curr1->next) {
+    o_curr1 = o_curr1->next;
+    env_obj_t* e_obj1 = (env_obj_t*)o_curr1->data;
+    List_Node* o_curr2 = o_curr1;
+    while (o_curr2 && o_curr2->next) {
+      o_curr2 = o_curr2->next;
+      env_obj_t* e_obj2 = (env_obj_t*)o_curr2->data;
+      if ((*dl->condition)(game, e_obj1, e_obj2) && e_obj1->id != e_obj2->id) {
+        (*dl->action)(game, e_obj1, e_obj2);
+      }
+    }
+  }
+}
+
 short is_pressed(Game* game, Keys key) { return game->pressed_keys[key]; }
 
 void listen(Game* game) {
@@ -258,6 +275,8 @@ void listen(Game* game) {
 
     if (l->arg_num == 1) {
       apply_single_listener(game, l->listener);
+    } else if (l->arg_num == 2) {
+      apply_double_listener(game, l->listener);
     }
   }
 }

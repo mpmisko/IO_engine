@@ -14,6 +14,8 @@ typedef struct {
   int dright;
   int dleft;
   int dbckwd;
+  double rotation_speed;
+  int movement_speed;
 } Player;
 
 struct local_variables {
@@ -32,10 +34,10 @@ bool move_fwd_cond(Game* game, env_obj_t* obj) {
 }
 
 void move_fwd(Game* game, env_obj_t* obj) {
-  obj->sprite->rectangle.x -=
-      round(sin(to_radians(-obj->sprite->angle)) * obj->sprite->movement_speed);
-  obj->sprite->rectangle.y -=
-      round(cos(to_radians(-obj->sprite->angle)) * obj->sprite->movement_speed);
+  obj->sprite->rectangle.x -= round(sin(to_radians(-obj->sprite->angle)) *
+                                    ((Player*)obj->object)->movement_speed);
+  obj->sprite->rectangle.y -= round(cos(to_radians(-obj->sprite->angle)) *
+                                    ((Player*)obj->object)->movement_speed);
 }
 
 bool move_bckwd_cond(Game* game, env_obj_t* obj) {
@@ -49,10 +51,10 @@ bool move_bckwd_cond(Game* game, env_obj_t* obj) {
 }
 
 void move_bckwd(Game* game, env_obj_t* obj) {
-  obj->sprite->rectangle.x +=
-      round(sin(to_radians(-obj->sprite->angle)) * obj->sprite->movement_speed);
-  obj->sprite->rectangle.y +=
-      round(cos(to_radians(-obj->sprite->angle)) * obj->sprite->movement_speed);
+  obj->sprite->rectangle.x += round(sin(to_radians(-obj->sprite->angle)) *
+                                    ((Player*)obj->object)->movement_speed);
+  obj->sprite->rectangle.y += round(cos(to_radians(-obj->sprite->angle)) *
+                                    ((Player*)obj->object)->movement_speed);
 }
 
 bool move_left_cond(Game* game, env_obj_t* obj) {
@@ -66,9 +68,10 @@ bool move_left_cond(Game* game, env_obj_t* obj) {
 }
 
 void move_left(Game* game, env_obj_t* obj) {
-     obj->sprite->angle = obj->sprite->angle - obj->sprite->rotation_speed < 0
-                         ? obj->sprite->angle - obj->sprite->rotation_speed + 360
-                         : obj->sprite->angle - obj->sprite->rotation_speed;
+  obj->sprite->angle =
+      obj->sprite->angle - ((Player*)obj->object)->rotation_speed < 0
+          ? obj->sprite->angle - ((Player*)obj->object)->rotation_speed + 360
+          : obj->sprite->angle - ((Player*)obj->object)->rotation_speed;
 }
 
 bool move_right_cond(Game* game, env_obj_t* obj) {
@@ -82,9 +85,10 @@ bool move_right_cond(Game* game, env_obj_t* obj) {
 }
 
 void move_right(Game* game, env_obj_t* obj) {
-     obj->sprite->angle = obj->sprite->angle + obj->sprite->rotation_speed >= 360
-                         ? obj->sprite->angle + obj->sprite->rotation_speed - 360
-                         : obj->sprite->angle + obj->sprite->rotation_speed;
+  obj->sprite->angle =
+      obj->sprite->angle + ((Player*)obj->object)->rotation_speed >= 360
+          ? obj->sprite->angle + ((Player*)obj->object)->rotation_speed - 360
+          : obj->sprite->angle + ((Player*)obj->object)->rotation_speed;
 }
 
 int main(void) {
@@ -97,14 +101,14 @@ int main(void) {
 
   struct local_variables lv;
 
-  Player p1 = {100, 0, 0, 0, 0};
+  Player p1 = {100, 0, 0, 0, 0, 7.5, 12};
 
   // create sprites
   lv.id1 = add_object(game, &p1, empty,
                       get_sprite(WINDOWWIDTH / 3, WINDOWHEIGHT / 2,
                                  "resources/sprite1.png", game));
 
-  Player p2 = {100, 0, 0, 0, 0};
+  Player p2 = {100, 0, 0, 0, 0, 7.5, 12};
   lv.id2 = add_object(game, &p2, empty,
                       get_sprite(2 * WINDOWWIDTH / 3, WINDOWHEIGHT / 2,
                                  "resources/sprite2.png", game));
