@@ -1,5 +1,4 @@
 #include "../../lib/io_lib.h"
-
 /*
  * Structure definitions.
  */
@@ -40,7 +39,7 @@ obj_sprite_t *player_sprite() {
 }
 
 
-void *create_player(game_t *game, int health, int power, int speed, int score, controls_t *control) {
+void *create_player(Game *game, int health, int power, int speed, int score, controls_t *control) {
   player_t *player = malloc(sizeof(struct player));
 
   if(!player) {
@@ -54,7 +53,7 @@ void *create_player(game_t *game, int health, int power, int speed, int score, c
   player->speed = speed;
   player->obj_sprite = player_sprite();
 
-  add_object(game, player, PLAYER);
+  add_object(game, player, PLAYER, player->obj_sprite);
 }
 
 void destroy_player(player_t *player) {
@@ -62,7 +61,7 @@ void destroy_player(player_t *player) {
   free(player);
 }
 
-void *create_shot(game_t *game, int power, obj_sprite_t *sprite) {
+void *create_shot(Game *game, int power, obj_sprite_t *sprite) {
   shot_t *shot = malloc(sizeof(struct shot));
 
   if(!shot) {
@@ -80,7 +79,7 @@ void destroy_shot(shot_t *shot) {
   free(shot);
 }
 
-void *create_tree(game_t *game, int height, obj_sprite_t *sprite) {
+void *create_tree(Game *game, int height, obj_sprite_t *sprite) {
   tree_t *tree = malloc(sizeof(struct tree));
 
   if (!tree) {
@@ -93,7 +92,7 @@ void *create_tree(game_t *game, int height, obj_sprite_t *sprite) {
   add_object(game, tree, TREE);
 }
 
-void shoot_action(game_t *game, env_obj_t *obj1) {
+void shoot_action(Game *game, env_obj_t *obj1) {
   player_t *p = (player_t*) obj1;
   obj_sprite_t *shot_sprite = malloc(sizeof(struct sprite_o));
   shot_sprite->x = p->obj_sprite->x;
@@ -103,32 +102,12 @@ void shoot_action(game_t *game, env_obj_t *obj1) {
   create_shot(game, p->power, shot_sprite);
 }
 
-bool shoot_condition(game_t *game, env_obj_t *obj1) {
-  if(obj1->type != PLAYER) {
-    return false;
-  }
-  player_t *p = (player_t*) obj1;
-  return (p->power > 10) && (is_clicked(obj1));
-}
-
-void shot_action(game_t *game, env_obj_t *obj1, env_obj_t *obj2) {
-  player_t *player = (player_t *) obj1->object;
-  shot_t *shot = (shot_t *) obj2->object;
-
-  player->health -= shot->power;
-  if(player->health <= 0) {
-    destroy_player(player);
-    delete_object(game, player);
-  }
-  destroy_shot(shot);
-  delete_object(game, shot);
-}
 
 long distance(obj_sprite_t *obj1, obj_sprite_t *obj2) {
   return lroundl(sqrt(pow(obj1->x - obj2->x, 2) + pow(obj1->y - obj2->y, 2)));
 }
 
-bool shot_condition(game_t *game, env_obj_t *obj1, env_obj_t *obj2) {
+bool shot_condition(Game *game, env_obj_t *obj1, env_obj_t *obj2) {
   if(!obj1->type == PLAYER) {
     return false;
   }
@@ -141,14 +120,4 @@ bool shot_condition(game_t *game, env_obj_t *obj1, env_obj_t *obj2) {
   shot_t *shot = (shot_t *) obj2->object;
 
   return distance(player->obj_sprite, shot->obj_sprite) < 5;
-}
-
-// object killing/revival --- player binding
-// random object distribution
-void start_game() {
-
-}
-
-void end_game() {
-
 }
