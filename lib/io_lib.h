@@ -16,6 +16,9 @@ typedef struct controls {
   control_mode_t control_mode;
 } controls_t;
 
+// end game
+// delete from game
+
 typedef struct sprite_o {
   int x;
   int y;
@@ -34,7 +37,7 @@ typedef struct environment_object {
 } env_obj_t;
 
 typedef struct game {
-  game_sprite_t game_sprite;
+  game_sprite_t *game_sprite;
 
   List_Node listeners;
   List_Node objects;
@@ -57,16 +60,14 @@ typedef struct double_listener {
 } d_listener_t;
 
 
-void initialise_game(game_t *game, env_obj_t *objects, listener_t *listener, int num_listeners);
-
 void add_object(game_t *game, void *object, int type);
+
+void delete_object(game_t *game, void *object);
 
 void add_single_listener(game_t *game, bool *condition(game_t*, env_obj_t*),
                          void (*actions[])(game_t*, env_obj_t*), int num_actions);
 
 void add_double_listener(game_t *game, bool *condition(game_t*, env_obj_t*, env_obj_t*),
                          void (*actions[])(game_t*, env_obj_t*, env_obj_t*), int num_actions);
-
-env_obj_t get_environment_object(void *obj, int type);
 
 #endif

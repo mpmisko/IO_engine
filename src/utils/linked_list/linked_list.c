@@ -20,7 +20,7 @@ List_Node *append(List_Node *head, void *data, size_t size) {
   } else {
     while (head->next) {  // iterate to the end of the list
       head = head->next;
-    }=
+    }
   }
   head->next = allocate_new_node();
   List_Node *new_node = head->next;
@@ -29,6 +29,25 @@ List_Node *append(List_Node *head, void *data, size_t size) {
           size);  // copy contents of data to the new_node -> data
 
   return new_node;
+}
+
+void delete_node(List_Node *head, void *data) {
+  if(!head || !data) {
+    return;
+  }
+
+  List_Node *next = head->next;
+  List_Node *curr = head;
+
+  while(next) {
+    if(next->data == data) {
+      curr->next = next->next;
+      free(next);
+      return;
+    }
+    curr = next;
+    next = next->next;
+  }
 }
 
 void delete_list(List_Node *head) {

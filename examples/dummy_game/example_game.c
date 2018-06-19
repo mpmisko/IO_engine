@@ -111,18 +111,44 @@ bool shoot_condition(game_t *game, env_obj_t *obj1) {
   return (p->power > 10) && (is_clicked(obj1));
 }
 
-void shot_action(player_t *player, shot_t *shot) {
+void shot_action(game_t *game, env_obj_t *obj1, env_obj_t *obj2) {
+  player_t *player = (player_t *) obj1->object;
+  shot_t *shot = (shot_t *) obj2->object;
+
   player->health -= shot->power;
   if(player->health <= 0) {
     destroy_player(player);
+    delete_object(game, player);
   }
   destroy_shot(shot);
+  delete_object(game, shot);
 }
 
 long distance(obj_sprite_t *obj1, obj_sprite_t *obj2) {
   return lroundl(sqrt(pow(obj1->x - obj2->x, 2) + pow(obj1->y - obj2->y, 2)));
 }
 
-bool shot_condition(player_t *player, shot_t *shot) {
+bool shot_condition(game_t *game, env_obj_t *obj1, env_obj_t *obj2) {
+  if(!obj1->type == PLAYER) {
+    return false;
+  }
+
+  if(!obj2->type == SHOT) {
+    return false;
+  }
+
+  player_t *player = (player_t *) obj1->object;
+  shot_t *shot = (shot_t *) obj2->object;
+
   return distance(player->obj_sprite, shot->obj_sprite) < 5;
+}
+
+// object killing/revival --- player binding
+// random object distribution
+void start_game() {
+
+}
+
+void end_game() {
+
 }
