@@ -4,6 +4,7 @@
 
 # compiled binaries
 render
+racergame
 
 # Object files
 *.o

@@ -7,6 +7,8 @@
 #define WINDOWWIDTH 1440
 #define WINDOWHEIGHT 800
 
+#define PLAYERSPEED 8
+
 enum obj_types { empty, player, shot };
 
 typedef struct {
@@ -23,26 +25,31 @@ typedef struct {
   int movement_speed;
 } Shot;
 
-
 struct local_variables {
   int id1;
   int id2;
 };
 
 bool detect_black(Game* game, env_obj_t* obj) {
-  return ((obj->type == player) &&
-          is_black(
-              game,
-              obj->sprite->rectangle.x + get_center(obj->sprite->rectangle).x,
-              obj->sprite->rectangle.y + get_center(obj->sprite->rectangle).y));
+  if (obj->type != player) {
+    return 0;
+  }
+
+  for (int x = obj->sprite->rectangle.x;
+       x < obj->sprite->rectangle.x + obj->sprite->rectangle.w; x++) {
+    for (int y = obj->sprite->rectangle.y;
+         y < obj->sprite->rectangle.y + obj->sprite->rectangle.h; y++) {
+      if (is_black(game, x, y)) {
+        return 1;
+      }
+    }
+  }
+
+  return 0;
 }
 
 bool detect_not_black(Game* game, env_obj_t* obj) {
-  return ((obj->type == player) &&
-          !is_black(
-              game,
-              obj->sprite->rectangle.x + get_center(obj->sprite->rectangle).x,
-              obj->sprite->rectangle.y + get_center(obj->sprite->rectangle).y));
+  return ((obj->type == player) && !detect_black(game, obj));
 }
 
 void slow_down(Game* game, env_obj_t* obj) {
@@ -50,7 +57,7 @@ void slow_down(Game* game, env_obj_t* obj) {
 }
 
 void speed_up(Game* game, env_obj_t* obj) {
-  ((Player*)obj->object)->movement_speed = 12;
+  ((Player*)obj->object)->movement_speed = PLAYERSPEED;
 }
 
 bool move_fwd_cond(Game* game, env_obj_t* obj) {
@@ -121,7 +128,6 @@ void move_right(Game* game, env_obj_t* obj) {
           : obj->sprite->angle + ((Player*)obj->object)->rotation_speed;
 }
 
-
 int main(void) {
   Game* game = init_game();  // create window
 
@@ -132,17 +138,15 @@ int main(void) {
 
   struct local_variables lv;
 
-  Player p1 = {100, 0, 0, 0, 0, 7.5, 12};
+  Player p1 = {100, 0, 0, 0, 0, 7.5, PLAYERSPEED};
 
   // create sprites
-  lv.id1 = add_object(game, &p1, player,
-                      get_sprite(100, 700,
-                                 "resources/sprite1.png", game));
+  lv.id1 = add_object(game, &p1, sizeof(Player), player,
+                      get_sprite(100, 700, "resources/sprite1.png", game));
 
-  Player p2 = {100, 0, 0, 0, 0, 7.5, 12};
-  lv.id2 = add_object(game, &p2, player,
-                      get_sprite(150, 700,
-                                 "resources/sprite2.png", game));
+  Player p2 = {100, 0, 0, 0, 0, 7.5, PLAYERSPEED};
+  lv.id2 = add_object(game, &p2, sizeof(Player), player,
+                      get_sprite(150, 700, "resources/sprite2.png", game));
 
   add_single_listener(game, move_fwd_cond, move_fwd);
   add_single_listener(game, move_bckwd_cond, move_bckwd);
@@ -150,7 +154,6 @@ int main(void) {
   add_single_listener(game, move_right_cond, move_right);
   add_single_listener(game, detect_black, slow_down);
   add_single_listener(game, detect_not_black, speed_up);
-
 
   game->user_variables = &lv;
 
