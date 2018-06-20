@@ -50,7 +50,7 @@ typedef struct double_listener {
 } d_listener_t;
 
 
-int add_object(Game *game, void *object, int type, Sprite *sprite);
+int add_object(Game *game, void *object, int obj_size, int type, Sprite *sprite);
 
 void delete_object(Game *game, env_obj_t *object);
 

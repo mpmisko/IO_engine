@@ -1,10 +1,11 @@
 #include "io_lib.h"
 
-int add_object(Game *game, void *object, int type, Sprite *sprite) {
+int add_object(Game *game, void *object, int obj_size, int type, Sprite *sprite) {
   static int id = 0;
   env_obj_t *env_obj = malloc(sizeof(struct environment_object));
   env_obj->type = type;
-  env_obj->object = object;
+  env_obj->object = malloc(obj_size);
+  memcpy(env_obj->object, object, obj_size);
   env_obj->sprite = sprite;
   env_obj->id = id;
   append(game->objects, env_obj, sizeof(struct environment_object));
@@ -14,6 +15,7 @@ int add_object(Game *game, void *object, int type, Sprite *sprite) {
 void delete_object(Game *game, env_obj_t *object) {
   delete_node(game->objects, object);
   free_sprite(object->sprite);
+  free(object->object);
 }
 
 void add_single_listener(Game *game, bool (*condition)(Game *, env_obj_t *),

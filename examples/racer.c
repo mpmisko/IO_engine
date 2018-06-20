@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "../lib/io_lib.h"
 #include "../src/renderer_main.h"
 
@@ -6,7 +7,7 @@
 #define WINDOWWIDTH 1440
 #define WINDOWHEIGHT 800
 
-enum obj_types { empty, player };
+enum obj_types { empty, player, shot };
 
 typedef struct {
   int hp;
@@ -17,6 +18,11 @@ typedef struct {
   double rotation_speed;
   int movement_speed;
 } Player;
+
+typedef struct {
+  int movement_speed;
+} Shot;
+
 
 struct local_variables {
   int id1;
@@ -115,6 +121,7 @@ void move_right(Game* game, env_obj_t* obj) {
           : obj->sprite->angle + ((Player*)obj->object)->rotation_speed;
 }
 
+
 int main(void) {
   Game* game = init_game();  // create window
 
@@ -143,6 +150,7 @@ int main(void) {
   add_single_listener(game, move_right_cond, move_right);
   add_single_listener(game, detect_black, slow_down);
   add_single_listener(game, detect_not_black, speed_up);
+
 
   game->user_variables = &lv;
 
