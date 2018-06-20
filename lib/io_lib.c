@@ -13,9 +13,9 @@ int add_object(Game *game, void *object, int obj_size, int type, Sprite *sprite)
 }
 
 void delete_object(Game *game, env_obj_t *object) {
-  delete_node(game->objects, object);
-  free_sprite(object->sprite);
   free(object->object);
+  free(object->sprite);
+  delete_node(game->objects, object);
 }
 
 void add_single_listener(Game *game, bool (*condition)(Game *, env_obj_t *),
