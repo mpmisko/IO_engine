@@ -5,7 +5,7 @@
 #include "../lib/io_lib.h"
 #include "../src/renderer_main.h"
 
-#define BACKGROUND_PATH "resources/racer/map.png"
+#define BACKGROUND_PATH "resources/tanks/background.png"
 #define WINDOWWIDTH 1440
 #define WINDOWHEIGHT 800
 
@@ -134,7 +134,7 @@ bool shot_hit_cond(Game* game, env_obj_t* obj1, env_obj_t* obj2) {
 
 void shot_hit_act(Game* game, env_obj_t* obj1, env_obj_t* obj2) {
   delete_object(game, obj2);
-  ((Player *) obj1->object)->hp -= 35;
+  ((Player *) obj1->object)->hp -= 25;
 }
 
 bool shoot_condition(Game* game, env_obj_t* obj) {
@@ -143,14 +143,14 @@ bool shoot_condition(Game* game, env_obj_t* obj) {
   }
   struct local_variables lv = *(struct local_variables*)game->user_variables;
 
-  return (((game->pressed_keys[O] && obj->id == lv.id1) ||
-         ((game->pressed_keys[T] && obj->id == lv.id2))) && (((Player*) obj->object)->cooldown == 0));
+  return (((game->pressed_keys[T] && obj->id == lv.id1) ||
+         ((game->pressed_keys[O] && obj->id == lv.id2))) && (((Player*) obj->object)->cooldown == 0));
 }
 
 void shoot_action(Game* game, env_obj_t* obj) {
-  Shot s = {.movement_speed = 15, .shooter_id = obj->id};
-  Sprite *shot_sprite = get_sprite(obj->sprite->rectangle.x, obj->sprite->rectangle.y,
-                                   "resources/bullet.png", game);
+  Shot s = {.movement_speed = 7, .shooter_id = obj->id};
+  Sprite *shot_sprite = get_sprite(obj->sprite->rectangle.x + 10, obj->sprite->rectangle.y + 10,
+                                   "resources/tanks/bullet.png", game);
   shot_sprite->angle = obj->sprite->angle;
   ((Player*) obj->object)->cooldown = 15;
   add_object(game, &s, sizeof(Shot), shot, shot_sprite);
@@ -180,6 +180,19 @@ void kill_player_act(Game* game, env_obj_t* obj) {
   delete_object(game, obj);
 }
 
+bool shot_out_cond(Game* game, env_obj_t* obj) {
+  if(!(obj->type == shot)) {
+    return false;
+  }
+  return ((obj->sprite->rectangle.x < 0 || obj->sprite->rectangle.y < 0) ||
+          (obj->sprite->rectangle.x > game->width || obj->sprite->rectangle.y > game->height));
+}
+
+void shot_out_act(Game* game, env_obj_t* obj) {
+  delete_object(game, obj);
+}
+
+
 int main(void) {
   Game* game = init_game();  // create window
 
@@ -190,17 +203,17 @@ int main(void) {
 
   struct local_variables lv;
 
-  Player p1 = {100, 0, 0, 0, 0, 7.5, 12, 5};
+  Player p1 = {100, 0, 0, 0, 0, 3, 3, 5};
 
   // create sprites
   lv.id1 = add_object(game, &p1, sizeof(Player), player,
                       get_sprite(100, 700,
-                                 "resources/sprite1.png", game));
+                                 "resources/tanks/tank1.png", game));
 
-  Player p2 = {100, 0, 0, 0, 0, 7.5, 12, 5};
+  Player p2 = {100, 0, 0, 0, 0, 3, 3, 5};
   lv.id2 = add_object(game, &p2, sizeof(Player), player,
-                      get_sprite(150, 700,
-                                 "resources/sprite2.png", game));
+                      get_sprite(1100, 700,
+                                 "resources/tanks/tank2.png", game));
 
   add_single_listener(game, move_fwd_cond, move_fwd);
   add_single_listener(game, move_bckwd_cond, move_bckwd);
@@ -210,6 +223,7 @@ int main(void) {
   add_single_listener(game, shot_movement_cond, shot_movement_act);
   add_single_listener(game, cooldown_cond, cooldown_act);
   add_single_listener(game, kill_player_cond, kill_player_act);
+  add_single_listener(game, shot_out_cond, shot_out_act);
   add_double_listener(game, shot_hit_cond, shot_hit_act);
 
   game->user_variables = &lv;

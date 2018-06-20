@@ -9,14 +9,20 @@ RENDERER_FILES=$(addprefix src/,renderer_main.c $(addprefix game/,sprite.c utils
 RENDERER_OBJECTS=$(RENDERER_FILES:%.c=$(RENDERER_BUILD_DIR)/%.o)
 RENDERER_HEADERS=$(addprefix src/game/,utils.h game.h) lib/io_lib.h src/utils/linked_list/linked_list.h
 RACER_EXECUTABLE=racergame
+TANKS_EXECUTABLE=tanksgame
 
-all: racer
+all: racer tanks
 
 racer: $(RACER_EXECUTABLE)
+tanks: $(TANKS_EXECUTABLE)
 
 $(RACER_EXECUTABLE): $(RENDERER_OBJECTS) $(RENDERER_BUILD_DIR)/examples/racer.o
 	@mkdir -p $(@D)
 	$(CC) $(RCFLAGS) $^ -o $(RACER_EXECUTABLE) $(RCLINKERFLAGS)
+
+$(TANKS_EXECUTABLE): $(RENDERER_OBJECTS) $(RENDERER_BUILD_DIR)/examples/tanks.o
+	@mkdir -p $(@D)
+	$(CC) $(RCFLAGS) $^ -o $(TANKS_EXECUTABLE) $(RCLINKERFLAGS)
 
 $(RENDERER_BUILD_DIR)/%.o: %.c $(RENDERER_HEADERS)
 	@mkdir -p $(@D)
@@ -25,3 +31,4 @@ $(RENDERER_BUILD_DIR)/%.o: %.c $(RENDERER_HEADERS)
 clean:
 	rm -rf $(RENDERER_BUILD_DIR)
 	rm -f $(RACER_EXECUTABLE)
+	rm -f $(TANKS_EXECUTABLE)
