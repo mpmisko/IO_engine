@@ -7,7 +7,7 @@
 #define WINDOWWIDTH 1440
 #define WINDOWHEIGHT 800
 
-#define PLAYERSPEED 8
+#define PLAYERSPEED 5
 
 enum obj_types { empty, player, shot };
 
@@ -142,11 +142,11 @@ int main(void) {
 
   // create sprites
   lv.id1 = add_object(game, &p1, sizeof(Player), player,
-                      get_sprite(100, 700, "resources/sprite1.png", game));
+                      get_sprite(100, 700, "resources/racer/car1.png", game));
 
   Player p2 = {100, 0, 0, 0, 0, 7.5, PLAYERSPEED};
   lv.id2 = add_object(game, &p2, sizeof(Player), player,
-                      get_sprite(150, 700, "resources/sprite2.png", game));
+                      get_sprite(150, 700, "resources/racer/car2.png", game));
 
   add_single_listener(game, move_fwd_cond, move_fwd);
   add_single_listener(game, move_bckwd_cond, move_bckwd);
