@@ -135,12 +135,12 @@ int main(void) {
   Player p1 = {100, 0, 0, 0, 0, 7.5, 12};
 
   // create sprites
-  lv.id1 = add_object(game, &p1, player,
+  lv.id1 = add_object(game, &p1, sizeof(Player), player,
                       get_sprite(100, 700,
                                  "resources/sprite1.png", game));
 
   Player p2 = {100, 0, 0, 0, 0, 7.5, 12};
-  lv.id2 = add_object(game, &p2, player,
+  lv.id2 = add_object(game, &p2, sizeof(Player), player,
                       get_sprite(150, 700,
                                  "resources/sprite2.png", game));
 
