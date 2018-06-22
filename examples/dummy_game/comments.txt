@@ -1,0 +1,1 @@
+Some object properties will have to be default.

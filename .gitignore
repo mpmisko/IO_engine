@@ -2,6 +2,10 @@
 # Prerequisites
 *.d
 
+# compiled binaries
+render
+racergame
+
 # Object files
 *.o
 *.ko
